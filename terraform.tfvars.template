@@ -1,0 +1,12 @@
+githubtoken = "ghp_your PATtoken goeshere"
+gitlabtoken = "you gitlab token goes here"
+git_runners = 1
+linuxuser = "runner"
+publicssh = "ssh-rsa AAAAB3Nza"
+gitorg = "mygithuborg"
+gitproject = "mygitlabproject"
+timezone = "Australia/Brisbane"
+lang="en_AU"
+release="2.286.1"
+OAUTH_CLIENT_ID=clientID
+OAUTH_CLIENT_SECRET=clientsecret
