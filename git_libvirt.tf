@@ -35,7 +35,7 @@ data "template_file" "git_user_data" {
 resource "libvirt_domain" "domain-debian-git" {
   name      = "debian-git-${count.index}"
   count     = var.git_runners
-  memory    = "1024"
+  memory    = "4096"
   vcpu      = 1
   cmdline   = []
   cloudinit = libvirt_cloudinit_disk.commoninit_git.id
