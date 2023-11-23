@@ -1,0 +1,16 @@
+FROM gitlab/gitlab-runner:latest
+ARG DISTRO=UBUNTU
+
+RUN apt-get -yq update
+RUN apt-get -yq install gnupg unzip lsb-release software-properties-common
+
+COPY src/* /tmp
+RUN chmod u+x /tmp/*.sh
+RUN /tmp/install_hashicorp.sh
+RUN /tmp/install_aws.sh
+RUN /tmp/install_tools.sh
+RUN /tmp/install_docker.sh
+
+RUN apt-get clean -y
+RUN rm -rf /tmp/*
+

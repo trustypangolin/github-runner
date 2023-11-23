@@ -1,0 +1,15 @@
+FROM docker-public.packages.atlassian.com/sox/atlassian/bitbucket-pipelines-runner:1
+ARG DISTRO=DEBIAN
+
+RUN apt-get -yq update
+RUN apt-get -yq install gnupg unzip lsb-release software-properties-common curl
+
+COPY src/* /tmp
+RUN chmod u+x /tmp/*.sh
+RUN /tmp/install_hashicorp.sh
+RUN /tmp/install_aws.sh
+RUN /tmp/install_tools.sh
+RUN /tmp/install_docker.sh
+
+RUN apt-get clean -y
+RUN rm -rf /tmp/*

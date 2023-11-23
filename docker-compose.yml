@@ -1,0 +1,54 @@
+version: "3.3"
+services:
+  sox:
+    # image: "docker-public.packages.atlassian.com/sox/atlassian/bitbucket-pipelines-runner:1"
+    image: "papina/bitbucket-runner:latest"
+    container_name: runner-11c79eb5-1a7f-5285-a53c-185ec5630704
+    volumes:
+      - "/tmp:/tmp"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+    environment:
+      - "ACCOUNT_UUID={377f8ca0-833d-4919-b278-6e8437bf59ae}"
+      - "REPOSITORY_UUID={7f2b5aaf-4e02-4a82-802e-6745f4dbc416}"
+      - "RUNNER_UUID={11c79eb5-1a7f-5285-a53c-185ec5630704}"
+      - RUNTIME_PREREQUISITES_ENABLED=true
+      - OAUTH_CLIENT_ID=CSh8BxPl4kHguRXmpuhVECv8BqBqQnBG
+      - OAUTH_CLIENT_SECRET=6kC4Pzg7rcPf5NpavVxSMpdcFLTigjBPrYpDQxrc2RezWoEgctZt3JbjklfCHvPC
+      - WORKING_DIRECTORY=/tmp
+
+  githubrunner:
+    image: "papina/github-runner:latest"
+    env_file: 
+      - ./terraform.env
+    volumes:
+      - "/tmp:/tmp"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+    working_dir: /actions-runner
+    user: vuser
+    command: /bin/bash
+
+  grafana:
+    # image: grafana/grafana-oss:main-ubuntu
+    image: papina/grafana:latest
+    container_name: "grafana"
+    ports:
+      - 3000:3000 
+    env_file: 
+      - ./terraform.env
+    user: root
+    # command: []
+    # entrypoint: [ "/usr/bin/supervisord" ]
+
+  portainer:
+    image: "portainer/portainer-ce:latest"
+    restart: unless-stopped
+    container_name: "portainer"
+    ports:
+      - 9000:9000
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"

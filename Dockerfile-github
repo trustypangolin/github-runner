@@ -1,0 +1,31 @@
+FROM debian:stable
+ARG DISTRO=DEBIAN
+
+RUN apt-get -yq update
+RUN apt-get -yq install gnupg unzip lsb-release software-properties-common curl sudo
+
+COPY src/* /tmp
+RUN chmod u+x /tmp/*.sh
+RUN /tmp/install_systemd.sh
+RUN /tmp/install_hashicorp.sh
+RUN /tmp/install_aws.sh
+RUN /tmp/install_tools.sh
+RUN /tmp/install_docker.sh
+
+#ENV USER vuser
+RUN groupadd vuser && useradd -m -g vuser vuser
+RUN usermod -aG sudo vuser
+RUN chown -R vuser:vuser /home/vuser
+RUN echo "vuser:vuser" | chpasswd
+RUN echo "vuser ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vuser
+
+RUN /tmp/install_github.sh
+RUN chown -R vuser:vuser /actions-runner
+
+RUN apt-get clean -y
+RUN rm -rf /tmp/*
+
+ENV RUNNER_ALLOW_RUNASROOT="1"
+COPY src/*.sh /home/vuser
+
+CMD ["/bin/bash", "-c", "/home/vuser/run_github.sh"]

@@ -1,0 +1,19 @@
+FROM grafana/grafana-oss:main-ubuntu
+
+USER root
+RUN apt-get update
+RUN apt-get -yq upgrade
+RUN apt-get -yq install unzip
+
+COPY src/* /tmp
+RUN /tmp/install_aws.sh
+RUN /tmp/install_ssm_cw.sh
+RUN /tmp/install_systemd.sh
+
+COPY src/run_ssm_agent.sh /
+RUN apt-get clean -y
+RUN rm -rf /tmp/*
+
+COPY ./supervisor/supervisord.conf /etc/supervisord.conf
+CMD []]
+ENTRYPOINT [ "/usr/bin/supervisord" ]
